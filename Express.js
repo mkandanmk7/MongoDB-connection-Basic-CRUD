@@ -10,50 +10,33 @@ const server = express();
 
 const port = "3001";
 
-// mongoDB connect
-mongo.connect();
+//wrapping to async () with IIFE
 
-// parse req body string to json format
+(async () => {
+  // mongoDB connect
+  await mongo.connectDB();
 
-server.use(express.json());
+  // parse req body string to json format
 
-// url /posts condtion pass the "/posts to before call back"
-server.use("/posts", postData);
+  server.use(express.json());
 
-// /user middle ware
+  //middle ware common  no url condtions
 
-server.use("/users", userData);
+  server.use((req, res, next) => {
+    console.log("common middle ware called");
+    next();
+  });
 
-//middle ware common  no url condtions
+  // url /posts condtion pass the "/posts to before call back"
+  server.use("/posts", postData);
 
-server.use((req, res, next) => {
-  console.log("common middle ware called");
-  next();
-});
+  // /user middle ware
 
-//post Api Routes;
-// get methods
+  server.use("/users", userData);
 
-server.get("/posts", postData);
+  //start the server;
 
-server.delete("/posts/:id", postData);
-
-server.post("/posts", postData);
-
-server.put("/posts/:id", postData);
-
-// user Api
-
-server.get("/users", userData);
-
-server.delete("/users/:id", userData);
-
-server.post("/users", userData);
-
-server.put("/users/:id", userData);
-
-//start the server;
-
-server.listen(port, () => {
-  console.log(`server Started at ${port}`);
-});
+  server.listen(port, () => {
+    console.log(`server Started at ${port}`);
+  });
+})();
