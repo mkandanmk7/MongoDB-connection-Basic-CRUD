@@ -21,7 +21,7 @@ module.exports = {
 
     //selecting db
 
-    this.db = client.db("admin"); // db() given by client ;
+    this.db = client.db("p_posts"); // db() given by client ;
     console.log("Database Selected   ");
   },
 };

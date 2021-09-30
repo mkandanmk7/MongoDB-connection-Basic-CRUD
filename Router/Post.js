@@ -1,37 +1,44 @@
 const postApi = require("express").Router();
 
+const { ObjectId } = require("bson");
 const mongo = require("../mongo");
 
 //post Api Routes;
 // get methods
 
 postApi.get("/", async (req, res) => {
-  // console.log(req.query);?
+  try {
+    // find  make it as array : toArray()
+    const getData = await mongo.db.collection("p_posts").find().toArray(); // use toArray( ) spl for find( ) query
 
-  // find  make it as array : toArray()
-  const getData = await mongo.db.collection("posts").find().toArray(); // use toArray( ) spl for find( ) query
-
-  // console.log(getData);
-  res.send(getData); // make it as array;   data to fEnd;
+    // console.log(getData);
+    res.send(getData); // make it as array;   data to fEnd;
+  } catch (err) {
+    res.sendStatus(500); // send error status;
+  }
 });
 
-postApi.delete("/:id", (req, res, next) => {
+postApi.delete("/:id", async (req, res, next) => {
   console.log("Posts delete middle ware called");
   console.log("Delete id is :", req.params.id);
   // deleteOne
-  res.end();
+  await mongo.db
+    .collection("posts")
+    .deleteOne({ _id: ObjectId(req.params.id) });
+  res.end({});
 });
 
 postApi.post("/", async (req, res) => {
-  // console.log("Posts post middle ware called");
+  try {
+    const { insertedId: _id } = await mongo.db
+      .collection("p_posts")
+      .insertOne(req.body);
 
-  const { insertedId: _id } = await mongo.db
-    .collection("posts")
-    .insertOne(req.body);
-
-  // console.log(req.body);
-  //insert
-  res.send({ ...req.body, id: _id });
+    //insert
+    res.send({ ...req.body, _id });
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
 postApi.put("/:id", (req, res, next) => {
