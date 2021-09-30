@@ -12,7 +12,7 @@ postApi.get("/", async (req, res) => {
     // find  make it as array : toArray()
     const getData = await db.posts.find().toArray(); // use toArray( ) spl for find( ) query
 
-    // console.log(getData);
+    console.log(getData);
     res.send(getData); // make it as array;   data to fEnd;
   } catch (err) {
     res.sendStatus(500); // send error status;
@@ -34,6 +34,7 @@ postApi.post("/", async (req, res) => {
   try {
     const { insertedId: _id } = await db.posts.insertOne(req.body);
 
+    console.log("created New data");
     //insert
     res.send({ ...req.body, _id });
   } catch (err) {
@@ -44,6 +45,7 @@ postApi.post("/", async (req, res) => {
 postApi.put("/:id", async (req, res) => {
   try {
     // console.log(req.params.id); // its string but _id: is Object(id)
+    console.log("Updated id is :", req.params.id);
     await db.posts.findOneAndUpdate(
       { _id: ObjectId(req.params.id) },
       { $set: { ...req.body } },

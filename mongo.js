@@ -18,6 +18,8 @@ module.exports = {
   // collections :
   posts: null,
 
+  users: null,
+
   async connectDB() {
     await client.connect();
     console.log("connected to Mongo DB");
@@ -28,5 +30,6 @@ module.exports = {
     console.log("Database Selected   ");
 
     this.posts = this.db.collection("p_posts");
+    this.users = this.db.collection("users");
   },
 };
