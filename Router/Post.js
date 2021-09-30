@@ -1,7 +1,8 @@
-const postApi = require("express").Router();
+const postApi = require("express").Router(); //for Routes
 
-const { ObjectId } = require("bson");
-const mongo = require("../mongo");
+const { ObjectId } = require("mongodb"); //driver
+
+const mongo = require("../mongo"); // mongo db connection
 
 //post Api Routes;
 // get methods
@@ -41,13 +42,25 @@ postApi.post("/", async (req, res) => {
   }
 });
 
-postApi.put("/:id", (req, res, next) => {
-  console.log("Posts put middle ware called");
+postApi.put("/:id", async (req, res) => {
+  try {
+    console.log(req.params.id); // its string but _id: is Object(id)
+    const data = await mongo.db
+      .collection("p_posts")
+      .findOneAndUpdate(
+        { _id: ObjectId(req.params.id) },
+        { $set: { ...req.body } },
+        { ReturnDocument: "after" }
+      );
+    console.log(data);
+    res.send({ ...req.body });
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+  }
 
-  console.log(req.body);
-  console.log(req.params);
-  //findOneUpdateOne;
-  res.send({ ...req.body, id: req.params.id });
+  // //findOneUpdateOne;
+  // res.send({ ...req.body, id: req.params.id });
 });
 
 module.exports = postApi;
