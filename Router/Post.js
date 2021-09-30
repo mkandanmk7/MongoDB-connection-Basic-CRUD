@@ -6,13 +6,12 @@ const mongo = require("../mongo");
 // get methods
 
 postApi.get("/", async (req, res) => {
-  console.log("Posts get middle ware called");
-  console.log(req.query);
+  // console.log(req.query);?
 
   // find  make it as array : toArray()
   const getData = await mongo.db.collection("posts").find().toArray(); // use toArray( ) spl for find( ) query
 
-  console.log(getData);
+  // console.log(getData);
   res.send(getData); // make it as array;   data to fEnd;
 });
 
@@ -23,12 +22,16 @@ postApi.delete("/:id", (req, res, next) => {
   res.end();
 });
 
-postApi.post("/", (req, res, next) => {
-  console.log("Posts post middle ware called");
+postApi.post("/", async (req, res) => {
+  // console.log("Posts post middle ware called");
 
-  console.log(req.body);
+  const { insertedId: _id } = await mongo.db
+    .collection("posts")
+    .insertOne(req.body);
+
+  // console.log(req.body);
   //insert
-  res.send({ ...req.body, id: 101 });
+  res.send({ ...req.body, id: _id });
 });
 
 postApi.put("/:id", (req, res, next) => {
