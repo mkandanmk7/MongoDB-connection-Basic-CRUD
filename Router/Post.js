@@ -20,13 +20,16 @@ postApi.get("/", async (req, res) => {
 });
 
 postApi.delete("/:id", async (req, res, next) => {
-  console.log("Posts delete middle ware called");
-  console.log("Delete id is :", req.params.id);
-  // deleteOne
-  await mongo.db
-    .collection("posts")
-    .deleteOne({ _id: ObjectId(req.params.id) });
-  res.end({});
+  try {
+    console.log("Delete id is :", req.params.id);
+    // deleteOne
+    await mongo.db
+      .collection("p_posts")
+      .deleteOne({ _id: ObjectId(req.params.id) });
+    res.send({});
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
 postApi.post("/", async (req, res) => {
@@ -44,23 +47,20 @@ postApi.post("/", async (req, res) => {
 
 postApi.put("/:id", async (req, res) => {
   try {
-    console.log(req.params.id); // its string but _id: is Object(id)
-    const data = await mongo.db
+    // console.log(req.params.id); // its string but _id: is Object(id)
+    await mongo.db
       .collection("p_posts")
       .findOneAndUpdate(
         { _id: ObjectId(req.params.id) },
         { $set: { ...req.body } },
         { ReturnDocument: "after" }
       );
-    console.log(data);
-    res.send({ ...req.body });
+    // console.log(data);
+    res.send({ ...req.body, id: req.params.id });
   } catch (err) {
     console.log(err);
     res.sendStatus(500);
   }
-
-  // //findOneUpdateOne;
-  // res.send({ ...req.body, id: req.params.id });
 });
 
 module.exports = postApi;
