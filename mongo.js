@@ -15,6 +15,9 @@ module.exports = {
 
   db: null, // for accessing db intially null
 
+  // collections :
+  posts: null,
+
   async connectDB() {
     await client.connect();
     console.log("connected to Mongo DB");
@@ -23,5 +26,7 @@ module.exports = {
 
     this.db = client.db("p_posts"); // db() given by client ;
     console.log("Database Selected   ");
+
+    this.posts = this.db.collection("p_posts");
   },
 };
